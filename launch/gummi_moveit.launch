@@ -1,6 +1,6 @@
 <launch>
 
-<group ns="moveit">
+<!--group ns="moveit"-->
   <!--  this solves the error messages Moveit! was generating when the arm is not in a very stable position -->
   <!-- <param name="move_group/trajectory_execution/allowed_start_tolerance" value="0.5" /> -->
   <!--  not this parameter is set inside trajectory_execution.launch.xml-->
@@ -24,18 +24,14 @@
   <!-- If needed, broadcast static tf for robot root -->
 
   <!-- If the joint_states published by gummi.py are the same as the Moveit! model, relay can be used -->
-  <!-- <node name="redirect" pkg="topic_tools" type="relay" args="/gummi/joint_states joint_states" output="screen"/> -->
-
-  <!-- It will be necessary to use the transform until the hand is not modelled inside Moveit! -->
-  <node name="redirect" pkg="topic_tools" type="relay" args="/gummi/joint_states joint_states" output="screen"/>
-  <!-- <remap from="/gummi/joint_states" to="joint_states"/> -->
+  <node name="redirect" pkg="topic_tools" type="relay" args="gummi/joint_states joint_states" output="screen"/>
 
   <!-- Given the published joint states, publish tf for the robot links -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen"/>
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find gummi_moveit)/launch/move_group.launch">
-    <arg name="moveit_ns" value="true"/>
+    <arg name="moveit_ns" value="false"/>
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
@@ -51,6 +47,6 @@
 
   <!-- If database loading was enabled, start mongodb as well -->
   <include file="$(find gummi_moveit)/launch/default_warehouse_db.launch" if="$(arg db)"/>
-</group>
+<!--/group-->
 
 </launch>
